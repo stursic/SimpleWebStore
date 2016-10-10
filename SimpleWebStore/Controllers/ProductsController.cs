@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SimpleWebStore.Models;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace SimpleWebStore.Controllers
 {
@@ -18,6 +20,7 @@ namespace SimpleWebStore.Controllers
         public ActionResult Index()
         {
             var products = db.Products.Include(p => p.Categories);
+
             return View(products.ToList());
         }
 
@@ -48,10 +51,24 @@ namespace SimpleWebStore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Price,Description,Image,CategoriesId")] Products products)
+        public ActionResult Create([Bind(Include = "Id,Name,Price,Description,CategoriesId")] Products products, HttpPostedFileBase productImg)
         {
             if (ModelState.IsValid)
             {
+
+                if (productImg != null)
+                {
+                    var fileName = Path.GetFileName(productImg.FileName);
+                    fileName = Regex.Replace(fileName, @"\s", "");
+                    fileName = Path.GetFileNameWithoutExtension(fileName) + DateTime.Now.Ticks + Path.GetExtension(fileName);
+                    var directoryToSave = Server.MapPath(Url.Content("~/Content/Images"));
+
+
+                    var pathToSave = Path.Combine(directoryToSave, fileName);
+                    productImg.SaveAs(pathToSave);
+                    products.Image = fileName;
+                }
+
                 db.Products.Add(products);
                 db.SaveChanges();
                 return RedirectToAction("Index");

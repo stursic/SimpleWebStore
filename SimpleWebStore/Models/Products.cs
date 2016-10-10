@@ -11,16 +11,21 @@ namespace SimpleWebStore.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Products
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Add product name!")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Add product price!")]
         public decimal Price { get; set; }
         public string Description { get; set; }
         public string Image { get; set; }
         public int CategoriesId { get; set; }
-    
+
         public virtual Categories Categories { get; set; }
     }
 }

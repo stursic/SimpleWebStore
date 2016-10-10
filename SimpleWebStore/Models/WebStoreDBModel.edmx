@@ -9,16 +9,16 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CategoryName" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Price" Type="decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Price" Type="money" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Image" Type="nvarchar(max)" />
           <Property Name="CategoriesId" Type="int" Nullable="false" />
