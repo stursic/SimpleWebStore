@@ -1,4 +1,5 @@
-﻿@model IEnumerable<SimpleWebStore.Models.Products>
+﻿@model SimpleWebStore.Models.BrowseProductsViewModel
+
 
 @{
     ViewBag.Title = "Browse products";
@@ -10,102 +11,53 @@
     @Html.ActionLink("+ Add product", "Create",null, new { @class = "btn btn-primary" })
 </p>
 
+<script type="text/javascript">
+    $tabs = $('#tabs').tabs();
+    $('#tabs').tabs('select', 'Music');
+   
+</script>
 <div class="panel panel-default">
 
+    <div id="tabs">
 
-    <ul class="nav nav-pills">
-        <li role="presentation" class="active"><a href="#">Home</a></li>
-        <li role="presentation"><a href="#">Profile</a></li>
-        <li role="presentation"><a href="#">Messages</a></li>
-    </ul>
+        <ul class="nav nav-pills">
+            <li class="active"><a data-toggle="pill" href="#all">All</a></li>
 
+            @foreach (var c in Model.Categories)
+            {    
+                <li><a data-toggle="pill" href="#@Html.DisplayFor(model => c.CategoryName)">@Html.DisplayFor(model => c.CategoryName)</a></li>
+            }
+        </ul>
 
-    <div class="panel-body">
-        @foreach (var item in Model)
-        {
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">@Html.DisplayFor(modelItem => item.Name)</h3>
-                </div>
+        <div class="tab-content">
+
+            <div id="all" class="tab-pane active">
                 <div class="panel-body">
-
-                    <div class="row">
-                        <div class="col-md-2">
-                            @if (item.Image == null)
-                            {
-                                <img src=@Url.Content("~/Content/nopicture.png") alt="some_text" class="img-responsive">
-                            }
-                            else
-                            {
-                                <img src=@Url.Content("~/Content/Images/"+ @Html.DisplayFor(modelItem => item.Image)) alt="some_text" class="img-responsive">
-                            }
-
-                        </div>
-                        <div class="col-md-10">
-                            <p><b>Description:</b> @Html.DisplayFor(modelItem => item.Description)</p>
-                            <p><b>Category:</b> @Html.DisplayFor(modelItem => item.Categories.CategoryName)</p>
-                            <p><b>Price:</b> @Html.DisplayFor(modelItem => item.Price) $</p>
-                            <br>
-                            <p>
-                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" })
-                            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-primary" })
-                        </p>
-                    </div>
+                    @foreach (var item in Model.Products)
+                    {
+                        @Html.Partial("_productsPartialView", item)
+                    }
                 </div>
-
-
             </div>
+
+            @foreach (var c in Model.Categories)
+            {
+
+                <div id="@Html.DisplayFor(model => c.CategoryName)" class="tab-pane">
+
+                    <div class="panel-body">
+                        @foreach (var item in Model.Products.Where(item => item.Categories.CategoryName.Equals(c.CategoryName)))
+                        {
+                           @Html.Partial("_productsPartialView", item)
+                        }
+                    </div>
+
+                </div>
+                  
+            }
         </div>
-        }
     </div>
+
 </div>
 
 
-
-@*
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Categories.CategoryName)
-            </th>
-            <th></th>
-        </tr>
-
-    @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Categories.CategoryName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-            </td>
-        </tr>
-    }
-
-    </table>*@

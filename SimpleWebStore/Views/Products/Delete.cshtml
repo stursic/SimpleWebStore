@@ -49,16 +49,11 @@
 
         <dd>
            
-            @if (Model.Image == null)
+            @if (Model.Image != null)
             {
-                <img src=@Url.Content("~/Content/nopicture.png") alt="some_text" class="img-responsive">
-            }
-            else
-            {
-                <img src=@Url.Content("~/Content/Images/"+ @Html.DisplayFor(model => model.Image)) alt="some_text" class="img-responsive">
+                <img src=@Url.Content("~/Content/Images/"+ @Html.DisplayFor(model => model.Image)) alt="some_text" class="img-responsive" width="150" height="150">
             }
            
-       
         </dd>
         <br>
       

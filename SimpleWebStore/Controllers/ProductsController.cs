@@ -19,9 +19,15 @@ namespace SimpleWebStore.Controllers
         // GET: Products
         public ActionResult Index()
         {
-            var products = db.Products.Include(p => p.Categories);
+            var categories = db.Categories.ToList();
+            var products = db.Products.Include(p => p.Categories).ToList();
 
-            return View(products.ToList());
+            BrowseProductsViewModel model = new BrowseProductsViewModel();
+            model.Categories = categories;
+            model.Products = products;
+
+
+            return View(model);
         }
 
         // GET: Products/Details/5

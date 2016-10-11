@@ -3,24 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SimpleWebStore.Models
 {
-    public class CreateProductViewModel
+    public class BrowseProductsViewModel
     {
-        [Required]
-        [Display(Name = "Name")]
-        public string Name{ get; set; }
 
-        [Required]
-        [Display(Name = "Category")]
-        public string Category { get; set; }
+        public IEnumerable<Products> Products { get; set; }
 
-        [Required]
-        [Display(Name = "Price")]
-        public double Price { get; set; }
+        public IEnumerable<Categories> Categories { get; set; }
 
-        [Display(Name = "Description")]
-        public string Description { get; set; }
-
-        [Display(Name = "Image")]
-        public string Image { get; set; }
     }
 }
