@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using SimpleWebStore.Models;
 using System.IO;
 using System.Text.RegularExpressions;
+using PagedList;
+
 
 namespace SimpleWebStore.Controllers
 {
@@ -17,18 +19,85 @@ namespace SimpleWebStore.Controllers
         private WebStoreDBEntities db = new WebStoreDBEntities();
 
         // GET: Products
-        public ActionResult Index()
+        public ActionResult Index(string search, string tab, int? page)
         {
-            var categories = db.Categories.ToList();
-            var products = db.Products.Include(p => p.Categories).ToList();
+            if(tab == null)
+            {
+                ViewBag.Active = "all";
+            }
+            else
+            {
+                ViewBag.Active = tab;
+            }
+
+
+           
+            var categories = db.Categories;
+            var products = db.Products.Include(p => p.Categories);
+
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                ViewBag.Search = search;
+                products = products.Where(s => s.Name.Contains(search)
+                                       || s.Name.Contains(search));
+
+                System.Diagnostics.Debug.WriteLine(products.Count()+ "First");
+            }
+            else
+            {
+                ViewBag.Search = "no";
+            }
+
+
+            
 
             BrowseProductsViewModel model = new BrowseProductsViewModel();
-            model.Categories = categories;
-            model.Products = products;
-
+            model.Categories = categories.ToList();
+            model.Products = products.OrderBy(a => a.Id).ToPagedList(1, 1);
 
             return View(model);
         }
+
+        public PartialViewResult _productsPartialView(BrowseProductsViewModel model, string tab, int? page, string search)
+        {
+
+
+            int pageSize = 1;
+            int pageNumber = (page ?? 1);
+
+            if (tab.Equals("all"))
+            {
+                var products = db.Products.Include(p => p.Categories);
+                model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
+
+            }
+            else
+            {
+                var products = db.Products.Include(p => p.Categories).Where(s => s.Categories.CategoryName.Equals(tab));
+                model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
+
+            }
+
+            
+
+            if (!search.Equals("no"))
+            {
+                var products = db.Products.Include(p => p.Categories).Where(s => s.Name.Contains(search));
+
+                System.Diagnostics.Debug.WriteLine(products.Count());
+                model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
+            }
+
+            var categories = db.Categories;
+            model.Categories = categories;
+
+            ViewBag.current = tab;
+            
+            return PartialView(model);
+        }
+
+
 
         // GET: Products/Details/5
         public ActionResult Details(int? id)

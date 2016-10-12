@@ -6,7 +6,7 @@ namespace SimpleWebStore.Models
     public class BrowseProductsViewModel
     {
 
-        public IEnumerable<Products> Products { get; set; }
+        public PagedList.IPagedList<Products> Products { get; set; }
 
         public IEnumerable<Categories> Categories { get; set; }
 
