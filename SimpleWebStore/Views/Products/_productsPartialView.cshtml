@@ -8,17 +8,18 @@
     <div id="noproducts">
         @if (Model.Products.Count() == 0 && Model.Products.PageNumber == 1)
         {
-            <h3>No products!</h3>
+            <h5>No products!</h5>
         }
     </div>
 
     <div id="searchd">
         @if (!Model.Search.Equals("no"))
         {
-            <h4>Your search for "@Model.Search" found @Model.Products.TotalItemCount products! </h4>
+            <h5>Your search for "@Model.Search" found @Model.Products.TotalItemCount products! </h5>
         }
     </div>
-    
+
+  
     @foreach (var item in Model.Products)
     {
         <div class="panel panel-primary">

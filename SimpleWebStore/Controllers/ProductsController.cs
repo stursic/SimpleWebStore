@@ -143,10 +143,14 @@ namespace SimpleWebStore.Controllers
                     products.Image = fileName;
                 }
 
+                TempData["Feedback"] = String.Format("New product {0} sucessfully added!", "\"" + products.Name + "\"");
+
                 db.Products.Add(products);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            TempData["Feedback"] = String.Format("Something went wrong with adding new product {0}!", "\"" + products.Name + "\"");
 
             ViewBag.CategoriesId = new SelectList(db.Categories, "Id", "CategoryName", products.CategoriesId);
             return View(products);
@@ -202,13 +206,15 @@ namespace SimpleWebStore.Controllers
                     products.Image = fileName;
                 }
 
-              
 
-          
+                TempData["Feedback"] = String.Format("Product {0} was sucessfully edited!", "\"" + products.Name + "\"");
+
                 db.Entry(products).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            TempData["Feedback"] = String.Format("Something went wrong with editing product {0}!", "\"" + products.Name + "\"");
             ViewBag.CategoriesId = new SelectList(db.Categories, "Id", "CategoryName", products.CategoriesId);
             return View(products);
         }
@@ -241,6 +247,8 @@ namespace SimpleWebStore.Controllers
             {
                 System.IO.File.Delete(fullPath);
             }
+
+            TempData["Feedback"] = String.Format("Product {0} was sucessfully deleted!", "\""+products.Name+"\"");
 
             db.SaveChanges();
             return RedirectToAction("Index");
