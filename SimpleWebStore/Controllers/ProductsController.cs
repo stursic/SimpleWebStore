@@ -18,6 +18,11 @@ namespace SimpleWebStore.Controllers
     {
         private WebStoreDBEntities db = new WebStoreDBEntities();
 
+        //set page size to 5 products per page
+        public const int pageSize = 5;
+        //set path to images
+        public const string ProductImagePath = "~/Content/Images/";
+
 
         [Route]
         // GET: Products
@@ -57,10 +62,7 @@ namespace SimpleWebStore.Controllers
         public PartialViewResult _productsPartialView(BrowseProductsViewModel model, string category, int? page, string search)
         {
 
-            //set page size to 5 products per page
-            int pageSize = 5;
             int pageNumber = (page ?? 1);
-
 
             //fill products depending on category or search
             if (category.Equals("All"))
@@ -134,7 +136,7 @@ namespace SimpleWebStore.Controllers
                     var fileName = Path.GetFileName(productImg.FileName);
                     fileName = Regex.Replace(fileName, @"\s", "");
                     fileName = Path.GetFileNameWithoutExtension(fileName) + DateTime.Now.Ticks + Path.GetExtension(fileName);
-                    var directoryToSave = Server.MapPath(Url.Content("~/Content/Images"));
+                    var directoryToSave = Server.MapPath(Url.Content(ProductImagePath));
 
                     var pathToSave = Path.Combine(directoryToSave, fileName);
                     productImg.SaveAs(pathToSave);
@@ -186,7 +188,7 @@ namespace SimpleWebStore.Controllers
                 if (productImg != null)
                 {
                     // if product image is being replaced, current image is deleted from Images folder
-                    string fullPath = Request.MapPath("~/Content/Images/" + products.Image);
+                    string fullPath = Request.MapPath(ProductImagePath + products.Image);
                     if (System.IO.File.Exists(fullPath))
                     {
                         System.IO.File.Delete(fullPath);
@@ -196,7 +198,7 @@ namespace SimpleWebStore.Controllers
                     var fileName = Path.GetFileName(productImg.FileName);
                     fileName = Regex.Replace(fileName, @"\s", "");
                     fileName = Path.GetFileNameWithoutExtension(fileName) + DateTime.Now.Ticks + Path.GetExtension(fileName);
-                    var directoryToSave = Server.MapPath(Url.Content("~/Content/Images"));
+                    var directoryToSave = Server.MapPath(Url.Content(ProductImagePath));
 
 
                     var pathToSave = Path.Combine(directoryToSave, fileName);
@@ -242,7 +244,7 @@ namespace SimpleWebStore.Controllers
             Products products = db.Products.Find(id);
             db.Products.Remove(products);
 
-            string fullPath = Request.MapPath("~/Content/Images/" + products.Image);
+            string fullPath = Request.MapPath(ProductImagePath + products.Image);
             if (System.IO.File.Exists(fullPath))
             {
                 System.IO.File.Delete(fullPath);

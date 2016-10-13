@@ -6,7 +6,7 @@
 <div class="panel-body">
 
     <div id="noproducts">
-        @if (Model.Products.Count() == 0 && Model.Products.PageNumber == 1)
+        @if (Model.Products.Count() == 0 && Model.Products.PageNumber == 1 && Model.Search.Equals("no"))
         {
             <h5>No products!</h5>
         }
