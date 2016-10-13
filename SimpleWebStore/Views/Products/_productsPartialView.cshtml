@@ -3,9 +3,22 @@
 @using PagedList;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
-
-
 <div class="panel-body">
+
+    <div id="noproducts">
+        @if (Model.Products.Count() == 0 && Model.Products.PageNumber == 1)
+        {
+            <h3>No products!</h3>
+        }
+    </div>
+
+    <div id="searchd">
+        @if (!Model.Search.Equals("no"))
+        {
+            <h4>Your search for "@Model.Search" found @Model.Products.TotalItemCount products! </h4>
+        }
+    </div>
+    
     @foreach (var item in Model.Products)
     {
         <div class="panel panel-primary">
@@ -17,7 +30,7 @@
                 <div class="row">
                     <div class="col-md-2">
                         @if (item.Image == null)
-                {
+                        {
                             <img src=@Url.Content("~/Content/nopicture.png") alt="some_text" class="img-responsive" width="150" height="150">
                         }
                         else
@@ -27,8 +40,12 @@
 
                     </div>
                     <div class="col-md-10">
-                        <p><b>Description:</b> @Html.DisplayFor(modelItem => item.Description)</p>
-                        <p><b>Category:</b> @Html.DisplayFor(modelItem => item.Categories.CategoryName)</p>
+                        <p>
+                            <div class="descr">
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </div>
+                        </p>
+                        <p><b>Category:</b>@Html.DisplayFor(modelItem => item.Categories.CategoryName)</p>
                         <p><b>Price:</b> @Html.DisplayFor(modelItem => item.Price) $</p>
                         <br>
                         <p>
@@ -37,14 +54,25 @@
                         </p>
                     </div>
                 </div>
-
-
             </div>
         </div>
-
     }
+    @*
+    Page @(Model.Products.PageCount < Model.Products.PageNumber ? 0:
+        Model.Products.PageNumber) of @Model.Products.PageCount*@
+
+    @Html.PagedListPager(Model.Products, page => Url.Action("Index", new {category=Model.ActiveCategory, page}))
 </div>
 
-@Html.PagedListPager(Model.Products, page => Url.Action("Index", new { page, tab = @ViewBag.active }))
 
+<script language="javascript">
+$(document).ready(function() {
 
+    $(".descr").shorten({
+        "showChars": 250,
+        "moreText": "See More",
+        "lessText": "Less",
+    });
+});
+
+</script>

@@ -15,13 +15,17 @@ namespace SimpleWebStore.Models
 
     public partial class Products
     {
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Add product name!")]
+        [StringLength(100, ErrorMessage = "Name can be max 100 characters in length!")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Add product price!")]
         public decimal Price { get; set; }
+
+        [StringLength(1000, ErrorMessage = "Description can be max 1000 characters in length!")]
         public string Description { get; set; }
         public string Image { get; set; }
         public int CategoriesId { get; set; }

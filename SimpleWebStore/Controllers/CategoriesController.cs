@@ -14,12 +14,15 @@ namespace SimpleWebStore.Controllers
     {
         private WebStoreDBEntities db = new WebStoreDBEntities();
 
+
+        [NonAction]
         // GET: Categories
         public ActionResult Index()
         {
             return View(db.Categories.ToList());
         }
 
+        [NonAction]
         // GET: Categories/Details/5
         public ActionResult Details(int? id)
         {
@@ -35,6 +38,7 @@ namespace SimpleWebStore.Controllers
             return View(categories);
         }
 
+        [NonAction]
         // GET: Categories/Create
         public ActionResult Create()
         {
@@ -57,7 +61,7 @@ namespace SimpleWebStore.Controllers
 
             return View(categories);
         }
-
+        [NonAction]
         // GET: Categories/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -88,7 +92,7 @@ namespace SimpleWebStore.Controllers
             }
             return View(categories);
         }
-
+        [NonAction]
         // GET: Categories/Delete/5
         public ActionResult Delete(int? id)
         {

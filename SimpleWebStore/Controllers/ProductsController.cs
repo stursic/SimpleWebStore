@@ -18,55 +18,52 @@ namespace SimpleWebStore.Controllers
     {
         private WebStoreDBEntities db = new WebStoreDBEntities();
 
+
+        [Route]
         // GET: Products
-        public ActionResult Index(string search, string tab, int? page)
+        public ActionResult Index(string search, string category, int? page)
         {
-            if(tab == null)
+
+            //initialize the viewmodel
+            BrowseProductsViewModel model = new BrowseProductsViewModel();
+
+            //fill category
+            if (category == null)
             {
-                ViewBag.Active = "all";
+                model.ActiveCategory = "All";
             }
             else
             {
-                ViewBag.Active = tab;
+                model.ActiveCategory = category;
             }
 
-
-           
-            var categories = db.Categories;
-            var products = db.Products.Include(p => p.Categories);
-
-
+            //fill search
             if (!String.IsNullOrEmpty(search))
             {
-                ViewBag.Search = search;
-                products = products.Where(s => s.Name.Contains(search)
-                                       || s.Name.Contains(search));
-
-                System.Diagnostics.Debug.WriteLine(products.Count()+ "First");
+                model.Search = search;
             }
             else
             {
-                ViewBag.Search = "no";
+                model.Search = "no";
             }
 
-
-            
-
-            BrowseProductsViewModel model = new BrowseProductsViewModel();
+            //fill categories
+            var categories = db.Categories;
             model.Categories = categories.ToList();
-            model.Products = products.OrderBy(a => a.Id).ToPagedList(1, 1);
-
+          
             return View(model);
         }
 
-        public PartialViewResult _productsPartialView(BrowseProductsViewModel model, string tab, int? page, string search)
+        public PartialViewResult _productsPartialView(BrowseProductsViewModel model, string category, int? page, string search)
         {
 
-
-            int pageSize = 1;
+            //set page size to 5 products per page
+            int pageSize = 5;
             int pageNumber = (page ?? 1);
 
-            if (tab.Equals("all"))
+
+            //fill products depending on category or search
+            if (category.Equals("All"))
             {
                 var products = db.Products.Include(p => p.Categories);
                 model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
@@ -74,25 +71,24 @@ namespace SimpleWebStore.Controllers
             }
             else
             {
-                var products = db.Products.Include(p => p.Categories).Where(s => s.Categories.CategoryName.Equals(tab));
+                var products = db.Products.Include(p => p.Categories).Where(s => s.Categories.CategoryName.Equals(category));
                 model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
-
             }
-
-            
-
+ 
             if (!search.Equals("no"))
             {
                 var products = db.Products.Include(p => p.Categories).Where(s => s.Name.Contains(search));
-
-                System.Diagnostics.Debug.WriteLine(products.Count());
                 model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
             }
 
+            //fill categories
             var categories = db.Categories;
             model.Categories = categories;
 
-            ViewBag.current = tab;
+            //set active category
+            model.ActiveCategory = category;
+            //set search string
+            model.Search = search;
             
             return PartialView(model);
         }
@@ -133,14 +129,17 @@ namespace SimpleWebStore.Controllers
 
                 if (productImg != null)
                 {
+
+                    //save image to folder Images and add current timestamp to name of the image
                     var fileName = Path.GetFileName(productImg.FileName);
                     fileName = Regex.Replace(fileName, @"\s", "");
                     fileName = Path.GetFileNameWithoutExtension(fileName) + DateTime.Now.Ticks + Path.GetExtension(fileName);
                     var directoryToSave = Server.MapPath(Url.Content("~/Content/Images"));
 
-
                     var pathToSave = Path.Combine(directoryToSave, fileName);
                     productImg.SaveAs(pathToSave);
+
+                    //set image name to model to be saved to database
                     products.Image = fileName;
                 }
 
@@ -174,10 +173,38 @@ namespace SimpleWebStore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Price,Description,Image,CategoriesId")] Products products)
+        public ActionResult Edit([Bind(Include = "Id,Name,Price,Description,Image,CategoriesId")] Products products,HttpPostedFileBase productImg)
         {
             if (ModelState.IsValid)
             {
+                
+
+                if (productImg != null)
+                {
+                    // if product image is being replaced, current image is deleted from Images folder
+                    string fullPath = Request.MapPath("~/Content/Images/" + products.Image);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+
+                    // new image is saved to folder Images
+                    var fileName = Path.GetFileName(productImg.FileName);
+                    fileName = Regex.Replace(fileName, @"\s", "");
+                    fileName = Path.GetFileNameWithoutExtension(fileName) + DateTime.Now.Ticks + Path.GetExtension(fileName);
+                    var directoryToSave = Server.MapPath(Url.Content("~/Content/Images"));
+
+
+                    var pathToSave = Path.Combine(directoryToSave, fileName);
+                    productImg.SaveAs(pathToSave);
+
+                    // filename of new image will be saved to database
+                    products.Image = fileName;
+                }
+
+              
+
+          
                 db.Entry(products).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -208,6 +235,13 @@ namespace SimpleWebStore.Controllers
         {
             Products products = db.Products.Find(id);
             db.Products.Remove(products);
+
+            string fullPath = Request.MapPath("~/Content/Images/" + products.Image);
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+
             db.SaveChanges();
             return RedirectToAction("Index");
         }

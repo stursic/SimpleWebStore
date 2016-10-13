@@ -9,13 +9,10 @@
 
 <h2>@ViewBag.Title</h2>
 
-
-
-
 <div class="col-sm-3 col-md-3 pull-right" >
     <form class="navbar-form" role="search">
         <div class="input-group">
-            @Html.TextBox("search", "",new { @class = "form-control", placeholder = "Search" })
+            @Html.TextBox("search", "",new { @class = "form-control", placeholder = "Search for product" })
             <div class="input-group-btn">
                 <button onclick="location.href='@Url.Action("Index")'" class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
             </div>
@@ -24,11 +21,9 @@
 </div>
 
 
-
 <p style="padding-top:10px;">
     @Html.ActionLink("+ Add product", "Create",null, new { @class = "btn btn-primary" })
 </p>
-
 
 
 <div class="panel panel-default">
@@ -36,44 +31,32 @@
     <div id="tabs">
 
         <ul class="nav nav-pills">
-            <li class="@(ViewBag.Active.Equals("all") ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {tab ="all", page = 1})'" data-toggle="pill" href="#all">All</a></li>
+            <li class="@(Model.ActiveCategory.Equals("All") ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {category ="All", page = 1})'" data-toggle="pill" href="#all">All</a></li>
 
             @foreach (var c in Model.Categories)
             {    
-               <li class="@(ViewBag.Active.Equals(c.CategoryName) ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {tab =c.CategoryName, page = 1 })'" data-toggle="pill" href="#@Html.DisplayFor(model => c.CategoryName)">@Html.DisplayFor(model => c.CategoryName)</a></li>
+               <li class="@(Model.ActiveCategory.Equals(c.CategoryName) ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {category =c.CategoryName, page = 1 })'" data-toggle="pill" href="#@Html.DisplayFor(model => c.CategoryName)">@Html.DisplayFor(model => c.CategoryName)</a></li>
             }
         </ul>
 
         <div class="tab-content">
 
-                <div id="all" class="@(ViewBag.Active.Equals("all") ? "tab-pane active" : "tab-pane")">
+                <div id="all" class="@(Model.ActiveCategory.Equals("All") ? "tab-pane active" : "tab-pane")">
 
-                    @Html.Action("_productsPartialView", new { tab = "all", search = ViewBag.Search })
+                    @Html.Action("_productsPartialView", new { category = "All", search = Model.Search })
 
                 </div>
             
-
-           
-
             @foreach (var c in Model.Categories)
             {
-               
-                <div id="@Html.DisplayFor(model => c.CategoryName)" class="@(ViewBag.Active.Equals(c.CategoryName) ? "tab-pane active" : "tab-pane")">
+                <div id="@Html.DisplayFor(model => c.CategoryName)" class="@(Model.ActiveCategory.Equals(c.CategoryName) ? "tab-pane active" : "tab-pane")">
 
-                    @Html.Action("_productsPartialView", new { tab = c.CategoryName, search = ViewBag.Search})
+                    @Html.Action("_productsPartialView", new { category = c.CategoryName, search = Model.Search })
                  
                 </div>
-
                 }
-
-            
-
-
         </div>
     </div>
-
-   
-
 </div>
 
 

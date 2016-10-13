@@ -10,5 +10,9 @@ namespace SimpleWebStore.Models
 
         public IEnumerable<Categories> Categories { get; set; }
 
+        public string ActiveCategory { get; set; }
+
+        public string Search { get; set; }
+
     }
 }
