@@ -200,8 +200,7 @@ UpgradeLog*.XML
 UpgradeLog*.htm
 
 # SQL Server files
-*.mdf
-*.ldf
+
 
 # Business Intelligence projects
 *.rdl.data
@@ -240,3 +239,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/SimpleWebStore/App_Data/WebStoreDB_log.ldf
+/SimpleWebStore/App_Data/Database1_log.ldf
+/SimpleWebStore/App_Data/Database1.mdf
