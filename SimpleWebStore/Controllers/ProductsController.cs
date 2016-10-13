@@ -79,6 +79,7 @@ namespace SimpleWebStore.Controllers
  
             if (!search.Equals("no"))
             {
+                pageNumber = 1;
                 var products = db.Products.Include(p => p.Categories).Where(s => s.Name.Contains(search));
                 model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
             }
