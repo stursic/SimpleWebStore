@@ -46,11 +46,13 @@ namespace SimpleWebStore.Controllers
             if (!String.IsNullOrEmpty(search))
             {
                 model.Search = search;
+
             }
             else
             {
-                model.Search = "no";
+                model.Search = "";
             }
+
 
             //fill categories
             var categories = db.Categories;
@@ -77,9 +79,8 @@ namespace SimpleWebStore.Controllers
                 model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
             }
  
-            if (!search.Equals("no"))
-            {
-                pageNumber = 1;
+            if (!search.Equals(""))
+            { 
                 var products = db.Products.Include(p => p.Categories).Where(s => s.Name.Contains(search));
                 model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
             }
