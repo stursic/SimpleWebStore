@@ -32,27 +32,33 @@ namespace SimpleWebStore.Controllers
             //initialize the viewmodel
             BrowseProductsViewModel model = new BrowseProductsViewModel();
 
-            //fill category
-            if (category == null)
+            var products = db.Products.Include(p => p.Categories);
+
+            int pageNumber = (page ?? 1);
+
+            //fill products depending on category or search
+            if (String.IsNullOrEmpty(category) || category.Equals("All"))
             {
                 model.ActiveCategory = "All";
+                products = db.Products.Include(p => p.Categories);
             }
             else
             {
                 model.ActiveCategory = category;
+                products = db.Products.Include(p => p.Categories).Where(s => s.Categories.CategoryName.Equals(category));
             }
 
-            //fill search
             if (!String.IsNullOrEmpty(search))
             {
                 model.Search = search;
-
+                products = db.Products.Include(p => p.Categories).Where(s => s.Name.Contains(search));
             }
             else
             {
                 model.Search = "";
             }
 
+            model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
 
             //fill categories
             var categories = db.Categories;
@@ -61,44 +67,7 @@ namespace SimpleWebStore.Controllers
             return View(model);
         }
 
-        public PartialViewResult _productsPartialView(BrowseProductsViewModel model, string category, int? page, string search)
-        {
-
-            int pageNumber = (page ?? 1);
-
-            //fill products depending on category or search
-            if (category.Equals("All"))
-            {
-                var products = db.Products.Include(p => p.Categories);
-                model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
-
-            }
-            else
-            {
-                var products = db.Products.Include(p => p.Categories).Where(s => s.Categories.CategoryName.Equals(category));
-                model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
-            }
- 
-            if (!search.Equals(""))
-            { 
-                var products = db.Products.Include(p => p.Categories).Where(s => s.Name.Contains(search));
-                model.Products = products.OrderBy(a => a.Id).ToPagedList(pageNumber, pageSize);
-            }
-
-            //fill categories
-            var categories = db.Categories;
-            model.Categories = categories;
-
-            //set active category
-            model.ActiveCategory = category;
-            //set search string
-            model.Search = search;
-            
-            return PartialView(model);
-        }
-
-
-
+       
         // GET: Products/Details/5
         public ActionResult Details(int? id)
         {

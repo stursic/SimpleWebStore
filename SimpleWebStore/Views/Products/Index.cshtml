@@ -35,45 +35,19 @@
             <div id="tabs">
 
                 <ul class="nav nav-pills">
-                    <li class="@(Model.ActiveCategory.Equals("All") ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {category ="All", page = 1})'" data-toggle="pill" href="#all">All</a></li>
+                    <li class="@(Model.ActiveCategory.Equals("All") ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {category ="All", page = 1})'" data-toggle="pill" href="All">All</a></li>
 
                     @foreach (var c in Model.Categories)
                     {
-                        <li class="@(Model.ActiveCategory.Equals(c.CategoryName) ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {category =c.CategoryName, page = 1 })'" data-toggle="pill" href="#@Html.DisplayFor(model => c.CategoryName)">@Html.DisplayFor(model => c.CategoryName)</a></li>
+                        <li class="@(Model.ActiveCategory.Equals(c.CategoryName) ? "active" : "")"><a onclick="location.href='@Url.Action("Index", new {category =c.CategoryName, page = 1 })'" data-toggle="pill" href="@Html.DisplayFor(model => c.CategoryName)">@Html.DisplayFor(model => c.CategoryName)</a></li>
                     }
                 </ul>
 
-
-                @if (Model.Search.Equals(""))
-            {
-                    <div class="tab-content">
-
-                        <div id="all" class="@(Model.ActiveCategory.Equals("All") ? "tab-pane active" : "tab-pane")">
-
-                            @Html.Action("_productsPartialView", new { category = "All", search = Model.Search })
-
-                        </div>
-
-                        @foreach (var c in Model.Categories)
-                {
-                            <div id="@Html.DisplayFor(model => c.CategoryName)" class="@(Model.ActiveCategory.Equals(c.CategoryName) ? "tab-pane active" : "tab-pane")">
-
-                                @Html.Action("_productsPartialView", new { category = c.CategoryName, search = Model.Search})
-
-                            </div>
-                        }
+                <div class="tab-content">
+                    <div id="@Model.ActiveCategory">
+                        @Html.Partial("_productsPartialView")
                     </div>
-                }
-                else
-                {
-
-                <div id="searchh">       
-                    @Html.Action("_productsPartialView", new { category = Model.ActiveCategory, search = Model.Search })
-                </div>
-
-                }
-
-
+                </div>  
 
             </div>
         </div>
